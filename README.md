@@ -1,0 +1,1 @@
+This is an intermediary redirect page which is a classic, battle-tested workaround that professional web developers use specifically to break out of Facebook's "jail" (its internal browser) on mobile devices.
