@@ -6,12 +6,11 @@
         window.onload = function() {
             var targetUrl = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec"; 
             
-            var ua = navigator.userAgent || navigator.vendor || window.opera;
-            var isFacebook = (ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1);
-
-            if (isFacebook) {
+            // This universal trick tells mobile devices to open directly in the native system browser
+            if (navigator.userAgent.match(/iPhone|iPad|iPod|Android/i)) {
                 window.location.href = targetUrl + "?fb_open_external=1";
             } else {
+                // Desktop or anything else just glides straight through
                 window.location.href = targetUrl;
             }
         };
