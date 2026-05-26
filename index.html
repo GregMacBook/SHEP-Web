@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Opening Safe Haven Essential Packs...</title>
+    <title>Opening SHEP Hub...</title>
     <script>
-        // No checks, no mobile vs desktop calculations, no variables. 
-        // Just a direct, instant command to go to the web app.
-        window.location.href = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec";
+        var googleUrl = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec";
+        
+        // If opened inside Facebook's app on an iPhone/iPad, force a target switch
+        if (navigator.userAgent.indexOf('FBAN') > -1 || navigator.userAgent.indexOf('FBAV') > -1) {
+            window.location.href = googleUrl;
+        } else {
+            // Normal browser route
+            window.location.replace(googleUrl);
+        }
     </script>
 </head>
-<body>
-    <p style="text-align:center; font-family:sans-serif; margin-top:50px;">
-        Loading the SHEP Hub... If it doesn't open automatically, 
-        <a href="https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec">click here</a>.
-    </p>
+<body style="background:#fcfaff; font-family:sans-serif; text-align:center; padding-top:50px;">
+    <h3>Loading the SHEP Hub...</h3>
+    <p>If the page doesn't load automatically, <a href="https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec" target="_blank">Click Here to Open</a></p>
 </body>
 </html>
