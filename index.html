@@ -8,18 +8,18 @@
     html, body { margin: 0; padding: 0; min-height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: #fcfaff; }
     body { display: flex; flex-direction: row; }
     
-    /* Sidebar Layout */
+    /* Sidebar Layout (Desktop/Tablet) */
     .sidebar { width: 280px; min-width: 280px; background: #916bbf; display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0; box-shadow: 4px 0 15px rgba(0,0,0,0.1); z-index: 20; }
     .logo-header { padding: 15px; text-align: center; background: white; border-bottom: 3px solid #ac8ad4; }
     #tabs { overflow-y: auto; flex-grow: 1; padding-bottom: 20px; }
     .tab { padding: 16px 20px; margin: 6px 0 6px 15px; background: #ac8ad4; border-radius: 25px 0 0 25px; cursor: pointer; transition: 0.3s; font-weight: 600; color: #fff; text-transform: uppercase; font-size: 0.72em; letter-spacing: 1px; }
     .tab.active { background: #fcfaff; color: #4a4e69; margin-right: -1px; }
     
-    /* Main Content Layout (Fixed Scrolling) */
+    /* Main Content Layout (Desktop/Tablet) */
     .main-container { flex-grow: 1; padding: 40px; box-sizing: border-box; min-width: 0; background-color: #fcfaff; height: 100vh; overflow-y: auto; }
     .divider { height: 4px; width: 60px; background: #84a59d; margin: 15px 0 30px 0; border-radius: 2px; }
     
-    /* Content Boxes */
+    /* Content Elements */
     .commentary-box { background: #fff; padding: 25px; border-radius: 15px; border-left: 10px solid #916bbf; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; color: #4a4e69; line-height: 1.7; max-width: 900px; word-wrap: break-word; }
     .collection-grid { display: flex; gap: 20px; flex-wrap: wrap; }
     .category-column { flex: 1; min-width: 280px; background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
@@ -35,13 +35,47 @@
     .location-pin { cursor: pointer; font-size: 1.4em; margin-left: 15px; }
     .loading-text { font-style: italic; color: #888; }
 
-    /* Mobile Rules */
+    /* 📱 FIXED MOBILE RESPONSIVE RULES 📱 */
     @media (max-width: 768px) {
-      body { flex-direction: column; }
-      .sidebar { width: 100%; min-width: 100%; height: auto; position: relative; }
-      .tab { margin: 4px 15px; border-radius: 25px; text-align: center; }
-      .tab.active { margin-right: 15px; background: #f0ebf7; color: #916bbf; }
-      .main-container { padding: 20px; height: auto; overflow-y: visible; }
+      body { flex-direction: column; height: auto; overflow-y: auto; }
+      
+      .sidebar { 
+        width: 100%; 
+        min-width: 100%; 
+        height: auto; 
+        position: relative; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        z-index: 30; /* Front layer so phone gestures register clicks */
+      }
+      
+      #tabs {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px 0;
+      }
+      
+      .tab { 
+        width: 85%;
+        margin: 6px 0; 
+        border-radius: 25px; 
+        text-align: center; 
+        box-sizing: border-box;
+        padding: 14px 20px;
+      }
+      
+      .tab.active { 
+        background: #f0ebf7; 
+        color: #916bbf; 
+        margin-right: 0;
+      }
+      
+      .main-container { 
+        padding: 30px 20px; 
+        height: auto; 
+        overflow-y: visible; 
+        z-index: 10;
+      }
     }
   </style>
 </head>
@@ -60,7 +94,6 @@
     let allData = [];
     const macroUrl = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec";
 
-    // Grab the main dashboard package
     fetch(macroUrl)
       .then(response => response.json())
       .then(data => { 
@@ -82,14 +115,13 @@
       if (str.indexOf('/file/d/') !== -1) { id = str.split('/file/d/')[1].split('/')[0]; } 
       else if (str.indexOf('id=') !== -1) { id = str.split('id=')[1].split('&')[0]; }
       if (id) { return 'https://drive.google.com/uc?export=view&id=' + id + '&cb=' + new Date().getTime(); }
-      return str; // If it's a normal direct image URL, return it directly
+      return str;
     }
 
     function renderMenu(data) {
       var tabContainer = document.getElementById('tabs');
       tabContainer.innerHTML = "";
       
-      // Filter menu categories out accurately
       var cleanCategories = [];
       var seen = {};
       data.forEach(function(row) {
@@ -150,7 +182,6 @@
           } else if (name === "MONETARY DONATIONS") {
              display.innerHTML = `<div class="commentary-box"><h3>Your Impact Matters</h3><p>At <strong>SHEP</strong>, every dollar donated goes toward providing hygiene essentials for those in our community. Thank you for your support.</p></div><div class="info-line"><span>Account: SAFE HAVEN ESSENTIAL PACKS</span></div><div class="info-line"><span>BSB: 306821 / Acct: 6706014</span></div><center><button class="donate-btn" onclick="window.open('https://tinyurl.com/SHEPDonation', '_blank')">Complete Donation & Get Receipt</button></center>`;
           } else {
-            // Strictly isolate text rows matching ONLY this category
             display.innerHTML = "";
             var capture = false;
             for(var i=0; i<allData.length; i++) {
