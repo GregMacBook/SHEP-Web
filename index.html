@@ -2,7 +2,7 @@
 <html>
 <head>
   <base target="_top">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SHEP - Safe Haven Essential Packs</title>
   <style>
     html, body { margin: 0; padding: 0; min-height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: #fcfaff; }
@@ -12,7 +12,7 @@
     .sidebar { width: 280px; min-width: 280px; background: #916bbf; display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0; box-shadow: 4px 0 15px rgba(0,0,0,0.1); z-index: 20; }
     .logo-header { padding: 15px; text-align: center; background: white; border-bottom: 3px solid #ac8ad4; }
     #tabs { overflow-y: auto; flex-grow: 1; padding-bottom: 20px; }
-    .tab { padding: 16px 20px; margin: 6px 0 6px 15px; background: #ac8ad4; border-radius: 25px 0 0 25px; cursor: pointer; transition: 0.3s; font-weight: 600; color: #fff; text-transform: uppercase; font-size: 0.72em; letter-spacing: 1px; }
+    .tab { padding: 16px 20px; margin: 6px 0 6px 15px; background: #ac8ad4; border-radius: 25px 0 0 25px; cursor: pointer; transition: 0.3s; font-weight: 600; color: #fff; text-transform: uppercase; font-size: 0.72em; letter-spacing: 1px; -webkit-tap-highlight-color: transparent; }
     .tab.active { background: #fcfaff; color: #4a4e69; margin-right: -1px; }
     
     /* Main Content Layout (Desktop/Tablet) */
@@ -35,7 +35,7 @@
     .location-pin { cursor: pointer; font-size: 1.4em; margin-left: 15px; }
     .loading-text { font-style: italic; color: #888; }
 
-    /* 📱 FIXED MOBILE RESPONSIVE RULES 📱 */
+    /* 📱 FULLY OPTIMISED MOBILE RULES 📱 */
     @media (max-width: 768px) {
       body { flex-direction: column; height: auto; overflow-y: auto; }
       
@@ -45,36 +45,39 @@
         height: auto; 
         position: relative; 
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        z-index: 30; /* Front layer so phone gestures register clicks */
+        z-index: 999; /* Force past invisible glass container layout layers */
       }
       
       #tabs {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 10px 0;
+        padding: 15px 0;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
       }
       
       .tab { 
         width: 85%;
-        margin: 6px 0; 
-        border-radius: 25px; 
+        margin: 6px 0 !important; 
+        border-radius: 25px !important; 
         text-align: center; 
         box-sizing: border-box;
-        padding: 14px 20px;
+        padding: 15px 20px;
+        display: block;
       }
       
       .tab.active { 
-        background: #f0ebf7; 
-        color: #916bbf; 
-        margin-right: 0;
+        background: #f0ebf7 !important; 
+        color: #916bbf !important; 
+        margin-right: 0 !important;
       }
       
       .main-container { 
         padding: 30px 20px; 
         height: auto; 
         overflow-y: visible; 
-        z-index: 10;
+        z-index: 1;
       }
     }
   </style>
@@ -94,6 +97,7 @@
     let allData = [];
     const macroUrl = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec";
 
+    // Initialize layout pipeline load
     fetch(macroUrl)
       .then(response => response.json())
       .then(data => { 
@@ -118,7 +122,7 @@
       return str;
     }
 
-function renderMenu(data) {
+    function renderMenu(data) {
       var tabContainer = document.getElementById('tabs');
       tabContainer.innerHTML = "";
       
@@ -141,10 +145,7 @@ function renderMenu(data) {
         btn.className = 'tab'; 
         btn.innerText = categoryName;
         
-        // Explicit touch and click handling for mobile screens
-        var handleTap = function(e) {
-          if(e) e.preventDefault();
-          
+        btn.onclick = function(e) {
           document.getElementById('tab-title').innerText = categoryName;
           var display = document.getElementById('content');
           var name = categoryName.toUpperCase().trim();
@@ -222,13 +223,9 @@ function renderMenu(data) {
           document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
           btn.classList.add('active');
         };
-
-        // Attach both click and mobile touch end listeners
-        btn.onclick = handleTap;
-        btn.ontouchend = handleTap;
         
         tabContainer.appendChild(btn);
-        if (index === 0) handleTap();
+        if (index === 0) btn.click();
       });
     }
   </script>
