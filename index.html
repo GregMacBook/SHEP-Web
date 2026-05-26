@@ -3,25 +3,15 @@
 <head>
     <title>Opening Safe Haven Essential Packs...</title>
     <script>
-        window.onload = function() {
-            var targetUrl = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec"; 
-            
-            // Forces mobile devices straight to the external browser loop, no complex checks
-            if (navigator.userAgent.match(/iPhone|iPad|iPod|Android/i)) {
-                window.location.href = targetUrl + "?fb_open_external=1";
-            } else {
-                window.location.href = targetUrl;
-            }
-        };
+        // No checks, no mobile vs desktop calculations, no variables. 
+        // Just a direct, instant command to go to the web app.
+        window.location.href = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec";
     </script>
 </head>
 <body>
     <p style="text-align:center; font-family:sans-serif; margin-top:50px;">
         Loading the SHEP Hub... If it doesn't open automatically, 
-        <a id="directLink" href="#">click here</a>.
+        <a href="https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec">click here</a>.
     </p>
-    <script>
-        document.getElementById("directLink").href = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec";
-    </script>
 </body>
 </html>
