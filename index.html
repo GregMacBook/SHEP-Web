@@ -223,7 +223,7 @@
                   var pin = "";
                   if(allData[i][2] && allData[i][2].toString().toLowerCase().includes('http')) {
                      var mapUrl = 'https://maps.google.com/?q=' + encodeURIComponent(l);
-                     pin = '<div class="location-pin" onclick="window.open(\'' + mapUrl + '\', \'_blank\'); event.stopPropagation();">📍</div>';
+                     pin = '<div class="location-pin" onclick="window.open(\'' + mapUrl + '\', \'_self\'); event.stopPropagation();">📍</div>';
                   }
                   rowDiv.innerHTML = '<span>' + formatBold(l) + '</span>' + pin;
                   display.appendChild(rowDiv);
