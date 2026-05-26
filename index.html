@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Opening SHEP Hub...</title>
-    <script>
-        var googleUrl = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec";
-        
-        // If opened inside Facebook's app on an iPhone/iPad, force a target switch
-        if (navigator.userAgent.indexOf('FBAN') > -1 || navigator.userAgent.indexOf('FBAV') > -1) {
-            window.location.href = googleUrl;
-        } else {
-            // Normal browser route
-            window.location.replace(googleUrl);
-        }
-    </script>
+    <title>SHEP Hub Launchpad</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { background: #fcfaff; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 40px 20px; color: #4a4e69; }
+        .card { background: white; max-width: 400px; margin: 0 auto; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 8px solid #916bbf; }
+        h2 { color: #916bbf; margin-top: 0; }
+        .btn { display: inline-block; margin-top: 20px; padding: 15px 30px; background: #84a59d; color: white; border-radius: 35px; font-weight: bold; text-decoration: none; text-transform: uppercase; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .instructions { background: #f0ebf7; padding: 15px; border-radius: 10px; margin-top: 25px; font-size: 0.9em; text-align: left; line-height: 1.5; }
+        .highlight { font-weight: bold; color: #916bbf; }
+    </style>
 </head>
-<body style="background:#fcfaff; font-family:sans-serif; text-align:center; padding-top:50px;">
-    <h3>Loading the SHEP Hub...</h3>
-    <p>If the page doesn't load automatically, <a href="https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec" target="_blank">Click Here to Open</a></p>
+<body>
+
+    <div class="card">
+        <h2>SHEP Hub Launchpad</h2>
+        <p>Promoting self care and hygiene for the vulnerable.</p>
+        
+        <a href="https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec" class="btn" target="_blank">Open SHEP Hub</a>
+
+        <div class="instructions">
+            <strong>iPhone / iPad Users:</strong><br>
+            If you see a blank screen or an error, tap the <strong>three dots (...)</strong> or the <strong>Compass icon</strong> at the top or bottom right of your screen and select <span class="highlight">"Open in Browser"</span> or <span class="highlight">"Open in Safari"</span>.
+        </div>
+    </div>
+
 </body>
 </html>
