@@ -118,12 +118,13 @@
       return str;
     }
 
-    function renderMenu(data) {
+function renderMenu(data) {
       var tabContainer = document.getElementById('tabs');
       tabContainer.innerHTML = "";
       
       var cleanCategories = [];
       var seen = {};
+      
       data.forEach(function(row) {
         if (row[0] && row[0].toString().trim() !== "") {
           var catName = row[0].toString().trim();
@@ -137,18 +138,24 @@
       
       cleanCategories.forEach(function(categoryName, index) {
         var btn = document.createElement('div');
-        btn.className = 'tab'; btn.innerText = categoryName;
-        btn.onclick = function() {
+        btn.className = 'tab'; 
+        btn.innerText = categoryName;
+        
+        // Explicit touch and click handling for mobile screens
+        var handleTap = function(e) {
+          if(e) e.preventDefault();
+          
           document.getElementById('tab-title').innerText = categoryName;
           var display = document.getElementById('content');
           var name = categoryName.toUpperCase().trim();
           
+          display.innerHTML = '<span class="loading-text">Loading ' + categoryName + '...</span>';
+          
           if (name === "WHAT DO WE COLLECT") {
-            display.innerHTML = '<div class="collection-grid" id="coll-box"><span class="loading-text">Loading items...</span></div>';
             fetch(macroUrl + "?action=collections")
               .then(res => res.json())
               .then(items => {
-                var box = document.getElementById('coll-box'); box.innerHTML = "";
+                var box = document.createElement('div'); box.className = 'collection-grid';
                 var groups = {};
                 items.slice(1).forEach(function(it) { 
                   if(!it[0] || it[0].trim() === "" || !it[1]) return; 
@@ -165,20 +172,25 @@
                   });
                   box.appendChild(col);
                 });
-              });
+                display.innerHTML = "";
+                display.appendChild(box);
+              }).catch(err => { display.innerText = "Error loading collections."; });
+              
           } else if (name === "PICTURES") {
-            display.innerHTML = '<div class="pictures-grid" id="pic-box"><span class="loading-text">Loading gallery...</span></div>';
             fetch(macroUrl + "?action=pictures")
               .then(res => res.json())
               .then(pics => {
-                var box = document.getElementById('pic-box'); box.innerHTML = "";
+                var box = document.createElement('div'); box.className = 'pictures-grid';
                 pics.slice(1).forEach(function(p) {
                   if(!p[1] || p[1].toString().trim() === "") return;
                   var card = document.createElement('div'); card.className = 'gallery-card';
                   card.innerHTML = '<img src="' + getImgUrl(p[1]) + '" class="gallery-img"><div style="margin-top:10px;font-weight:bold;color:#4a4e69;">' + (p[0] || "") + '</div>';
                   box.appendChild(card);
                 });
-              });
+                display.innerHTML = "";
+                display.appendChild(box);
+              }).catch(err => { display.innerText = "Error loading gallery."; });
+              
           } else if (name === "MONETARY DONATIONS") {
              display.innerHTML = `<div class="commentary-box"><h3>Your Impact Matters</h3><p>At <strong>SHEP</strong>, every dollar donated goes toward providing hygiene essentials for those in our community. Thank you for your support.</p></div><div class="info-line"><span>Account: SAFE HAVEN ESSENTIAL PACKS</span></div><div class="info-line"><span>BSB: 306821 / Acct: 6706014</span></div><center><button class="donate-btn" onclick="window.open('https://tinyurl.com/SHEPDonation', '_blank')">Complete Donation & Get Receipt</button></center>`;
           } else {
@@ -210,8 +222,13 @@
           document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
           btn.classList.add('active');
         };
+
+        // Attach both click and mobile touch end listeners
+        btn.onclick = handleTap;
+        btn.ontouchend = handleTap;
+        
         tabContainer.appendChild(btn);
-        if (index === 0) btn.click();
+        if (index === 0) handleTap();
       });
     }
   </script>
