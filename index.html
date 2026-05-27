@@ -140,13 +140,18 @@
       var cleanCategories = [];
       var seen = {};
       
+      // Smart tracker to remember category names across merged rows
+      var currentTrackingCategory = "";
+      
       data.forEach(function(row) {
         if (row[0] && row[0].toString().trim() !== "") {
-          var catName = row[0].toString().trim();
-          var upper = catName.toUpperCase();
+          currentTrackingCategory = row[0].toString().trim();
+        }
+        if (currentTrackingCategory !== "") {
+          var upper = currentTrackingCategory.toUpperCase();
           if (upper !== "DONATIONFORMURL" && upper !== "INSTAGRAM" && upper !== "FACEBOOK" && !seen[upper]) {
             seen[upper] = true;
-            cleanCategories.push(catName);
+            cleanCategories.push(currentTrackingCategory);
           }
         }
       });
@@ -207,27 +212,34 @@
              display.innerHTML = `<div class="commentary-box"><h3>Your Impact Matters</h3><p>At <strong>SHEP</strong>, every dollar donated goes toward providing hygiene essentials for those in our community. Thank you for your support.</p></div><div class="info-line"><span>Account: SAFE HAVEN ESSENTIAL PACKS</span></div><div class="info-line"><span>BSB: 306821 / Acct: 6706014</span></div><center><button class="donate-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScuk3Pg3a4wVbkR60Pe6ni3EUNsMdLySbCuNF-mzXvXy8JwpQ/viewform?usp=header', '_self')">Complete Donation & Get Receipt</button></center>`;
           } else {
             display.innerHTML = "";
-            var capture = false;
+            var activeCategory = "";
+            
             for(var i=0; i<allData.length; i++) {
-              if(allData[i][0] && allData[i][0].toString().trim().toUpperCase() === name) { 
-                capture = true; 
-              } else if (allData[i][0] && allData[i][0].toString().trim() !== "" && allData[i][0].toString().trim().toUpperCase() !== name) { 
-                capture = false; 
+              if(allData[i][0] && allData[i][0].toString().trim() !== "") {
+                activeCategory = allData[i][0].toString().trim().toUpperCase();
               }
               
-              if(capture && allData[i][1] && allData[i][1].toString().trim() !== "") {
-                var lines = allData[i][1].toString().split('\n');
-                lines.forEach(function(l) {
-                  if(!l.trim()) return;
-                  var rowDiv = document.createElement('div'); rowDiv.className = 'info-line';
-                  var pin = "";
-                  if(allData[i][2] && allData[i][2].toString().toLowerCase().includes('http')) {
-                     var mapUrl = allData[i][2].toString().trim();
-                     pin = '<div class="location-pin" onclick="window.open(\'' + mapUrl + '\', \'_self\'); event.stopPropagation();">📍</div>';
-                  }
-                  rowDiv.innerHTML = '<span>' + formatBold(l) + '</span>' + pin;
-                  display.appendChild(rowDiv);
-                });
+              if(activeCategory === name) {
+                if(allData[i][1] && allData[i][1].toString().trim() !== "") {
+                  var lines = allData[i][1].toString().split('\n');
+                  lines.forEach(function(l) {
+                    if(!l.trim()) return;
+                    var rowDiv = document.createElement('div'); rowDiv.className = 'info-line';
+                    var pin = "";
+                    
+                    // Secure map target evaluator that extracts pure URLs from iframe strings
+                    if(allData[i][2] && allData[i][2].toString().toLowerCase().includes('http')) {
+                       var mapUrl = allData[i][2].toString().trim();
+                       if (mapUrl.includes('src="')) {
+                          mapUrl = mapUrl.split('src="')[1].split('"')[0];
+                       }
+                       pin = '<div class="location-pin" onclick="window.open(\'' + mapUrl + '\', \'_blank\'); event.stopPropagation();">📍</div>';
+                    }
+                    
+                    rowDiv.innerHTML = '<span>' + formatBold(l) + '</span>' + pin;
+                    display.appendChild(rowDiv);
+                  });
+                }
               }
             }
           }
