@@ -31,60 +31,19 @@
     .gallery-img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; }
     .info-line { margin-bottom: 12px; padding: 18px 22px; border-left: 8px solid #84a59d; background: white; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); color: #4a4e69; max-width: 900px; word-wrap: break-word; }
     .donate-btn { display: inline-block; margin-top: 20px; padding: 18px 45px; background: #84a59d; color: white; border-radius: 35px; font-weight: bold; cursor: pointer; text-decoration: none; border: none; text-transform: uppercase; font-size: 1.1em; }
-    .location-pin { cursor: pointer; font-size: 1.4em; margin-left: 15px; }
+    .location-pin { cursor: pointer; font-size: 1.4em; margin-left: 15px; -webkit-tap-highlight-color: transparent; }
     .loading-text { font-style: italic; color: #888; }
 
-/* 📱 PERFECT COMPACT MOBILE RULES 📱 */
+    /* 📱 PERFECT COMPACT MOBILE RULES 📱 */
     @media (max-width: 768px) {
       body { flex-direction: column; height: auto; overflow-y: auto; }
-      
-      .sidebar { 
-        width: 100%; 
-        min-width: 100%; 
-        height: auto; 
-        position: relative; 
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        z-index: 999;
-        background: #916bbf;
-      }
-      
+      .sidebar { width: 100%; min-width: 100%; height: auto; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 999; background: #916bbf; }
       .logo-header { padding: 10px; }
-      .logo-header img { width: 90px; } /* Shrinks the logo space on mobile */
-      
-      #tabs {
-        display: flex;
-        flex-direction: row; /* Stacks tabs side-by-side instead of taking up the whole screen! */
-        overflow-x: auto;    /* Allows sliding the buttons left-to-right with your thumb */
-        overflow-y: visible;
-        padding: 8px;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-        justify-content: flex-start;
-      }
-      
-      .tab { 
-        display: inline-block;
-        width: auto;
-        margin: 0 5px !important; 
-        border-radius: 20px !important; 
-        text-align: center; 
-        padding: 10px 18px;
-        font-size: 0.65em;
-        flex-shrink: 0;
-      }
-      
-      .tab.active { 
-        background: #f0ebf7 !important; 
-        color: #916bbf !important; 
-        margin-right: 5px !important;
-      }
-      
-      .main-container { 
-        padding: 20px 15px; 
-        height: auto; 
-        overflow-y: visible; 
-        z-index: 1;
-      }
+      .logo-header img { width: 90px; }
+      #tabs { display: flex; flex-direction: row; overflow-x: auto; overflow-y: visible; padding: 8px; white-space: nowrap; -webkit-overflow-scrolling: touch; justify-content: flex-start; }
+      .tab { display: inline-block; width: auto; margin: 0 5px !important; border-radius: 20px !important; text-align: center; padding: 10px 18px; font-size: 0.65em; flex-shrink: 0; }
+      .tab.active { background: #f0ebf7 !important; color: #916bbf !important; margin-right: 5px !important; }
+      .main-container { padding: 20px 15px; height: auto; overflow-y: visible; z-index: 1; }
     }
   </style>
 </head>
@@ -94,16 +53,17 @@
     <div id="tabs"></div>
   </div>
   <div class="main-container">
-  <h1 id="tab-title">SHEP</h1>
-  <div class="divider"></div>
-  <div id="content">
-    <div class="commentary-box">
-      <h2>Safe Haven Essential Packs (SHEP)</h2>
-      <p><strong>Promoting self-care and hygiene for the vulnerable.</strong> We are dedicated to supporting our community by providing essential hygiene packs to those who need them most.</p>
-      <p class="loading-text" style="margin-top: 15px;">🔄 Syncing latest live data from Google Sheets...</p>
+    <h1 id="tab-title">SHEP</h1>
+    <div class="divider"></div>
+    <div id="content">
+      <div class="commentary-box">
+        <h2>Safe Haven Essential Packs (SHEP)</h2>
+        <p><strong>Promoting self-care and hygiene for the vulnerable.</strong> We are dedicated to supporting our community by providing essential hygiene packs to those who need them most.</p>
+        <p class="loading-text" style="margin-top: 15px;">🔄 Syncing latest live data from Google Sheets...</p>
+      </div>
     </div>
   </div>
-</div>
+
   <script>
     let allData = [];
     const macroUrl = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec";
@@ -120,7 +80,9 @@
         console.error(err);
       });
 
-    function formatBold(text) { return text.toString().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); }
+    function formatBold(text) { 
+      return text.toString().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); 
+    }
     
     function getImgUrl(url) {
       if (!url) return 'https://i.imgur.com/oAWTWfg.png';
@@ -224,22 +186,47 @@
                   var lines = allData[i][1].toString().split('\n');
                   lines.forEach(function(l) {
                     if(!l.trim()) return;
-                    var rowDiv = document.createElement('div'); rowDiv.className = 'info-line';
-                    var pin = "";
                     
+                    // Create main row component safely
+                    var rowDiv = document.createElement('div'); 
+                    rowDiv.className = 'info-line';
+                    
+                    // Inject text via safe textual node
+                    var textSpan = document.createElement('span');
+                    textSpan.innerHTML = formatBold(l);
+                    rowDiv.appendChild(textSpan);
+                    
+                    // Evaluate and safely extract links from Column C
                     if(allData[i][2] && allData[i][2].toString().trim() !== "") {
-                       var mapUrl = allData[i][2].toString().trim();
+                       var cellLink = allData[i][2].toString().trim();
                        
-                       // Universal link checker - if it has an address link, clean it safely!
-                       if (mapUrl.toLowerCase().includes('http')) {
-                          if (mapUrl.includes('src="')) {
-                             mapUrl = mapUrl.split('src="')[1].split('"')[0];
+                       // Extraction filter: If an iframe snippet gets stuck in here, target only the url
+                       if (cellLink.includes('src="')) {
+                          cellLink = cellLink.split('src="')[1].split('"')[0];
+                       }
+                       
+                       // Validate if it's an actual link before making a button
+                       if (cellLink.toLowerCase().startsWith('http')) {
+                          var pinElement = document.createElement('div');
+                          pinElement.className = 'location-pin';
+                          
+                          // Assign pins for Google links, standard world globes for general websites
+                          if (cellLink.toLowerCase().includes('google') || cellLink.toLowerCase().includes('maps')) {
+                             pinElement.innerText = '📍';
+                          } else {
+                             pinElement.innerText = '🌐';
                           }
-                          pin = '<div class="location-pin" onclick="window.open(\'' + mapUrl + '\', \'_blank\'); event.stopPropagation();">📍</div>';
+                          
+                          // Isolated action pipeline - 100% immune to bleeding text leaks
+                          pinElement.onclick = function(event) {
+                             event.stopPropagation();
+                             window.open(cellLink, '_blank');
+                          };
+                          
+                          rowDiv.appendChild(pinElement);
                        }
                     }
                     
-                    rowDiv.innerHTML = '<span>' + formatBold(l) + '</span>' + pin;
                     display.appendChild(rowDiv);
                   });
                 }
