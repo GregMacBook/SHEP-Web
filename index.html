@@ -227,13 +227,16 @@
                     var rowDiv = document.createElement('div'); rowDiv.className = 'info-line';
                     var pin = "";
                     
-                    // Secure map target evaluator that extracts pure URLs from iframe strings
-                    if(allData[i][2] && allData[i][2].toString().toLowerCase().includes('http')) {
+                    if(allData[i][2] && allData[i][2].toString().trim() !== "") {
                        var mapUrl = allData[i][2].toString().trim();
-                       if (mapUrl.includes('src="')) {
-                          mapUrl = mapUrl.split('src="')[1].split('"')[0];
+                       
+                       // Universal link checker - if it has an address link, clean it safely!
+                       if (mapUrl.toLowerCase().includes('http')) {
+                          if (mapUrl.includes('src="')) {
+                             mapUrl = mapUrl.split('src="')[1].split('"')[0];
+                          }
+                          pin = '<div class="location-pin" onclick="window.open(\'' + mapUrl + '\', \'_blank\'); event.stopPropagation();">📍</div>';
                        }
-                       pin = '<div class="location-pin" onclick="window.open(\'' + mapUrl + '\', \'_blank\'); event.stopPropagation();">📍</div>';
                     }
                     
                     rowDiv.innerHTML = '<span>' + formatBold(l) + '</span>' + pin;
