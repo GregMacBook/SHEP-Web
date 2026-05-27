@@ -204,7 +204,8 @@
               }).catch(err => { display.innerText = "Error loading gallery."; });
               
           } else if (name === "MONETARY DONATIONS") {
-             display.innerHTML = `<div class="commentary-box"><h3>Your Impact Matters</h3><p>At <strong>SHEP</strong>, every dollar donated goes toward providing hygiene essentials for those in our community. Thank you for your support.</p></div><div class="info-line"><span>Account: SAFE HAVEN ESSENTIAL PACKS</span></div><div class="info-line"><span>BSB: 306821 / Acct: 6706014</span></div><center><button class="donate-btn" onclick="window.open('https://gregmacbook.github.io/shep-web/
+             display.innerHTML = `<div class="commentary-box"><h3>Your Impact Matters</h3><p>At <strong>SHEP</strong>, every dollar donated goes toward providing hygiene essentials for those in our community. Thank you for your support.</p></div><div class="info-line"><span>Account: SAFE HAVEN ESSENTIAL PACKS</span></div><div class="info-line"><span>BSB: 306821 / Acct: 6706014</span></div><center><button class="donate-btn" onclick="window.open('https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec', '_blank')">Complete Donation & Get Receipt</button></center>`;
+          } else {
             display.innerHTML = "";
             var capture = false;
             for(var i=0; i<allData.length; i++) {
@@ -221,7 +222,7 @@
                   var rowDiv = document.createElement('div'); rowDiv.className = 'info-line';
                   var pin = "";
                   if(allData[i][2] && allData[i][2].toString().toLowerCase().includes('http')) {
-                     var mapUrl = 'https://maps.google.com/?q=' + encodeURIComponent(l);
+                     var mapUrl = allData[i][2].toString().trim();
                      pin = '<div class="location-pin" onclick="window.open(\'' + mapUrl + '\', \'_self\'); event.stopPropagation();">📍</div>';
                   }
                   rowDiv.innerHTML = '<span>' + formatBold(l) + '</span>' + pin;
