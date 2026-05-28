@@ -1,50 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="google-site-verification" content="6ZUtW9SuF1V-awMvEljGknjpPrEfiGNv3vlqacDAe6k" />
-  <title>SHEP - Safe Haven Essential Packs</title>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    html, body { margin: 0; padding: 0; min-height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: #fcfaff; }
+    html, body { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: #fcfaff; overflow: hidden; }
     body { display: flex; flex-direction: row; }
-    
-    /* Sidebar Layout (Desktop/Tablet) */
-    .sidebar { width: 280px; min-width: 280px; background: #916bbf; display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0; box-shadow: 4px 0 15px rgba(0,0,0,0.1); z-index: 20; }
-    .logo-header { padding: 15px; text-align: center; background: white; border-bottom: 3px solid #ac8ad4; }
-    #tabs { overflow-y: auto; flex-grow: 1; padding-bottom: 20px; }
-    .tab { padding: 16px 20px; margin: 6px 0 6px 15px; background: #ac8ad4; border-radius: 25px 0 0 25px; cursor: pointer; transition: 0.3s; font-weight: 600; color: #fff; text-transform: uppercase; font-size: 0.72em; letter-spacing: 1px; -webkit-tap-highlight-color: transparent; }
+    .sidebar { width: 280px; min-width: 280px; background: #916bbf; display: flex; flex-direction: column; height: 100vh; box-shadow: 4px 0 15px rgba(0,0,0,0.1); z-index: 20; overflow-y: auto; }
+    .logo-header { padding: 15px; text-align: center; background: white; border-bottom: 3px solid #ac8ad4; position: sticky; top: 0; }
+    .tab { padding: 16px 20px; margin: 6px 0 6px 15px; background: #ac8ad4; border-radius: 25px 0 0 25px; cursor: pointer; transition: 0.3s; font-weight: 600; color: #fff; text-transform: uppercase; font-size: 0.72em; letter-spacing: 1px; }
     .tab.active { background: #fcfaff; color: #4a4e69; margin-right: -1px; }
-    
-    /* Main Content Layout (Desktop/Tablet) */
-    .main-container { flex-grow: 1; padding: 40px; box-sizing: border-box; min-width: 0; background-color: #fcfaff; height: 100vh; overflow-y: auto; }
+    .main-container { flex-grow: 1; padding: 40px; box-sizing: border-box; overflow-y: auto; height: 100vh; min-width: 0; }
     .divider { height: 4px; width: 60px; background: #84a59d; margin: 15px 0 30px 0; border-radius: 2px; }
-    
-    /* Content Elements */
     .commentary-box { background: #fff; padding: 25px; border-radius: 15px; border-left: 10px solid #916bbf; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; color: #4a4e69; line-height: 1.7; max-width: 900px; word-wrap: break-word; }
     .collection-grid { display: flex; gap: 20px; flex-wrap: wrap; }
-    .category-column { flex: 1; min-width: 280px; background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+    .category-column { flex: 1; min-width: 300px; background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
     .category-header { color: #916bbf; border-bottom: 2px solid #ac8ad4; margin-bottom: 15px; text-align: center; font-weight: bold; }
     .item-row { display: flex; align-items: center; margin-bottom: 10px; padding: 8px; border-bottom: 1px solid #f0f0f0; }
     .donation-img-small { width: 55px; height: 55px; object-fit: cover; border-radius: 8px; background: #eee; }
     .item-name { margin-left: 15px; font-weight: bold; color: #4a4e69; font-size: 0.85em; }
-    .pictures-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+    .pictures-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
     .gallery-card { background: white; padding: 12px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
-    .gallery-img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; }
+    .gallery-img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; }
     .info-line { margin-bottom: 12px; padding: 18px 22px; border-left: 8px solid #84a59d; background: white; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); color: #4a4e69; max-width: 900px; word-wrap: break-word; }
     .donate-btn { display: inline-block; margin-top: 20px; padding: 18px 45px; background: #84a59d; color: white; border-radius: 35px; font-weight: bold; cursor: pointer; text-decoration: none; border: none; text-transform: uppercase; font-size: 1.1em; }
-    .location-pin { cursor: pointer; font-size: 1.4em; margin-left: 15px; -webkit-tap-highlight-color: transparent; }
-    .loading-text { font-style: italic; color: #888; }
-
-    /* 📱 PERFECT COMPACT MOBILE RULES 📱 */
-    @media (max-width: 768px) {
-      body { flex-direction: column; height: auto; overflow-y: auto; }
-      .sidebar { width: 100%; min-width: 100%; height: auto; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 999; background: #916bbf; }
-      .logo-header { padding: 10px; }
-      .logo-header img { width: 90px; }
-      #tabs { display: flex; flex-direction: row; overflow-x: auto; overflow-y: visible; padding: 8px; white-space: nowrap; -webkit-overflow-scrolling: touch; justify-content: flex-start; }
-      .tab { display: inline-block; width: auto; margin: 0 5px !important; border-radius: 20px !important; text-align: center; padding: 10px 18px; font-size: 0.65em; flex-shrink: 0; }
-      .tab.active { background: #f0ebf7 !important; color: #916bbf !important; margin-right: 5px !important; }
-      .main-container { padding: 20px 15px; height: auto; overflow-y: visible; z-index: 1; }
-    }
+    .location-pin { cursor: pointer; font-size: 1.4em; margin-left: 15px; }
   </style>
 </head>
 <body>
@@ -55,34 +35,12 @@
   <div class="main-container">
     <h1 id="tab-title">SHEP</h1>
     <div class="divider"></div>
-    <div id="content">
-      <div class="commentary-box">
-        <h2>Safe Haven Essential Packs (SHEP)</h2>
-        <p><strong>Promoting self-care and hygiene for the vulnerable.</strong> We are dedicated to supporting our community by providing essential hygiene packs to those who need them most.</p>
-        <p class="loading-text" style="margin-top: 15px;">🔄 Syncing latest live data from Google Sheets...</p>
-      </div>
-    </div>
+    <div id="content">Syncing latest data...</div>
   </div>
-
   <script>
     let allData = [];
-    const macroUrl = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec";
-
-    // Initialize layout pipeline load
-    fetch(macroUrl)
-      .then(response => response.json())
-      .then(data => { 
-        allData = data; 
-        renderMenu(data); 
-      })
-      .catch(err => {
-        document.getElementById('content').innerText = "Error syncing data. Please refresh.";
-        console.error(err);
-      });
-
-    function formatBold(text) { 
-      return text.toString().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); 
-    }
+    google.script.run.withSuccessHandler(function(data) { allData = data; renderMenu(data); }).getData();
+    function formatBold(text) { return text.toString().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); }
     
     function getImgUrl(url) {
       if (!url) return 'https://i.imgur.com/oAWTWfg.png';
@@ -92,58 +50,66 @@
       if (str.indexOf('/file/d/') !== -1) { id = str.split('/file/d/')[1].split('/')[0]; } 
       else if (str.indexOf('id=') !== -1) { id = str.split('id=')[1].split('&')[0]; }
       if (id) { return 'https://drive.google.com/uc?export=view&id=' + id + '&cb=' + new Date().getTime(); }
-      return str;
+      return 'https://i.imgur.com/oAWTWfg.png';
     }
 
     function renderMenu(data) {
       var tabContainer = document.getElementById('tabs');
       tabContainer.innerHTML = "";
-      
-      var cleanCategories = [];
-      var seen = {};
-      
-      // Smart tracker to remember category names across merged rows
-      var currentTrackingCategory = "";
-      
-      data.forEach(function(row) {
-        if (row[0] && row[0].toString().trim() !== "") {
-          currentTrackingCategory = row[0].toString().trim();
-        }
-        if (currentTrackingCategory !== "") {
-          var upper = currentTrackingCategory.toUpperCase();
-          if (upper !== "DONATIONFORMURL" && upper !== "INSTAGRAM" && upper !== "FACEBOOK" && !seen[upper]) {
-            seen[upper] = true;
-            cleanCategories.push(currentTrackingCategory);
-          }
-        }
+      var cleanData = data.filter(function(row) {
+        if (!row[0]) return false;
+        var name = row[0].toString().toUpperCase().trim();
+        return name !== "" && name !== "DONATIONFORMURL" && name !== "INSTAGRAM" && name !== "FACEBOOK";
       });
       
-      cleanCategories.forEach(function(categoryName, index) {
+      cleanData.forEach(function(row, index) {
         var btn = document.createElement('div');
-        btn.className = 'tab'; 
-        btn.innerText = categoryName;
-        
-        btn.onclick = function(e) {
-          document.getElementById('tab-title').innerText = categoryName;
+        btn.className = 'tab'; btn.innerText = row[0];
+        btn.onclick = function() {
+          document.getElementById('tab-title').innerText = row[0];
           var display = document.getElementById('content');
-          var name = categoryName.toUpperCase().trim();
-          
-          display.innerHTML = '<span class="loading-text">Loading ' + categoryName + '...</span>';
+          var name = row[0].toUpperCase().trim();
           
           if (name === "WHAT DO WE COLLECT") {
-            fetch(macroUrl + "?action=collections")
-              .then(res => res.json())
+            display.innerHTML = '<div class="collection-grid" id="coll-box">Loading...</div>';
+            google.script.run.withSuccessHandler(function(items) {
+              var box = document.getElementById('coll-box'); box.innerHTML = "";
+              var groups = {};
+              items.slice(1).forEach(function(it) { 
+                if(!it[0] || it[0].trim() === "" || !it[1]) return;
+                if(!groups[it[0]]) groups[it[0]] = []; 
+                groups[it[0]].push(it); 
+              });
+              Object.keys(groups).forEach(function(g) {
+                var col = document.createElement('div'); col.className = 'category-column';
+                col.innerHTML = '<div class="category-header">' + g + '</div>';
+                groups[g].forEach(function(it) {
+                  var r = document.createElement('div'); r.className = 'item-row';
+                  r.innerHTML = '<div><img src="' + getImgUrl(it[2]) + '" class="donation-img-small"></div><div class="item-name">' + it[1] + '</div>';
+                  col.appendChild(r);
+                });
+                box.appendChild(col);
+              });
+            }).getCollectionData();
+            
+          } else if (name === "WHAT WE CAN'T ACCEPT") {
+            display.innerHTML = '<div class="collection-grid" id="unacceptable-box">Loading...</div>';
+            
+            var scriptUrl = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec?action=unacceptable"; 
+            
+            fetch(scriptUrl)
+              .then(response => response.json())
               .then(items => {
-                var box = document.createElement('div'); box.className = 'collection-grid';
+                var box = document.getElementById('unacceptable-box'); box.innerHTML = "";
                 var groups = {};
                 items.slice(1).forEach(function(it) { 
-                  if(!it[0] || it[0].trim() === "" || !it[1]) return; 
+                  if(!it[0] || it[0].trim() === "" || !it[1]) return;
                   if(!groups[it[0]]) groups[it[0]] = []; 
                   groups[it[0]].push(it); 
                 });
                 Object.keys(groups).forEach(function(g) {
                   var col = document.createElement('div'); col.className = 'category-column';
-                  col.innerHTML = '<div class="category-header">' + g + '</div>';
+                  col.innerHTML = '<div class="category-header" style="color: #d9534f; border-bottom: 2px solid #d9534f;">' + g + '</div>';
                   groups[g].forEach(function(it) {
                     var r = document.createElement('div'); r.className = 'item-row';
                     r.innerHTML = '<div><img src="' + getImgUrl(it[2]) + '" class="donation-img-small"></div><div class="item-name">' + it[1] + '</div>';
@@ -151,92 +117,50 @@
                   });
                   box.appendChild(col);
                 });
-                display.innerHTML = "";
-                display.appendChild(box);
-              }).catch(err => { display.innerText = "Error loading collections."; });
-              
-          } else if (name === "PICTURES") {
-            fetch(macroUrl + "?action=pictures")
-              .then(res => res.json())
-              .then(pics => {
-                var box = document.createElement('div'); box.className = 'pictures-grid';
-                pics.slice(1).forEach(function(p) {
-                  if(!p[1] || p[1].toString().trim() === "") return;
-                  var card = document.createElement('div'); card.className = 'gallery-card';
-                  card.innerHTML = '<img src="' + getImgUrl(p[1]) + '" class="gallery-img"><div style="margin-top:10px;font-weight:bold;color:#4a4e69;">' + (p[0] || "") + '</div>';
-                  box.appendChild(card);
-                });
-                display.innerHTML = "";
-                display.appendChild(box);
-              }).catch(err => { display.innerText = "Error loading gallery."; });
-              
-          } else if (name === "MONETARY DONATIONS") {
-             display.innerHTML = `<div class="commentary-box"><h3>Your Impact Matters</h3><p>At <strong>SHEP</strong>, every dollar donated goes toward providing hygiene essentials for those in our community. Thank you for your support.</p></div><div class="info-line"><span>Account: SAFE HAVEN ESSENTIAL PACKS</span></div><div class="info-line"><span>BSB: 306821 / Acct: 6706014</span></div><center><button class="donate-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScuk3Pg3a4wVbkR60Pe6ni3EUNsMdLySbCuNF-mzXvXy8JwpQ/viewform?usp=header', '_self')">Complete Donation & Get Receipt</button></center>`;
-          } else {
-            display.innerHTML = "";
-            var activeCategory = "";
+              }).catch(err => {
+                document.getElementById('unacceptable-box').innerText = "Error loading unacceptable items.";
+              });
             
+          } else if (name === "PICTURES") {
+            display.innerHTML = '<div class="pictures-grid" id="pic-box">Loading...</div>';
+            google.script.run.withSuccessHandler(function(pics) {
+              var box = document.getElementById('pic-box'); box.innerHTML = "";
+              pics.slice(1).forEach(function(p) {
+                if(!p[1]) return;
+                var card = document.createElement('div'); card.className = 'gallery-card';
+                card.innerHTML = '<img src="' + getImgUrl(p[1]) + '" class="gallery-img"><div style="margin-top:10px;font-weight:bold;color:#4a4e69;">' + p[0] + '</div>';
+                box.appendChild(card);
+              });
+            }).getPicturesData();
+          } else if (name === "MONETARY DONATIONS") {
+             display.innerHTML = `<div class="commentary-box"><h3>Your Impact Matters</h3><p>At <strong>SHEP</strong>, every dollar donated goes toward providing hygiene essentials for those in our community. Thank you for your support.</p></div><div class="info-line"><span>Account: SAFE HAVEN ESSENTIAL PACKS</span></div><div class="info-line"><span>BSB: 306821 / Acct: 6706014</span></div><center><button class="donate-btn" onclick="window.open('https://tinyurl.com/SHEPDonation', '_blank')">Complete Donation & Get Receipt</button></center>`;
+          } else {
+            var contentRows = []; var capture = false;
             for(var i=0; i<allData.length; i++) {
-              if(allData[i][0] && allData[i][0].toString().trim() !== "") {
-                activeCategory = allData[i][0].toString().trim().toUpperCase();
-              }
-              
-              if(activeCategory === name) {
-                if(allData[i][1] && allData[i][1].toString().trim() !== "") {
-                  var lines = allData[i][1].toString().split('\n');
-                  lines.forEach(function(l) {
-                    if(!l.trim()) return;
-                    
-                    // Create main row component safely
-                    var rowDiv = document.createElement('div'); 
-                    rowDiv.className = 'info-line';
-                    
-                    // Inject text via safe textual node
-                    var textSpan = document.createElement('span');
-                    textSpan.innerHTML = formatBold(l);
-                    rowDiv.appendChild(textSpan);
-                    
-                    // Evaluate and safely extract links from Column C
-                    if(allData[i][2] && allData[i][2].toString().trim() !== "") {
-                       var cellLink = allData[i][2].toString().trim();
-                       
-                       // Extraction filter: If an iframe snippet gets stuck in here, target only the url
-                       if (cellLink.includes('src="')) {
-                          cellLink = cellLink.split('src="')[1].split('"')[0];
-                       }
-                       
-                       // Validate if it's an actual link before making a button
-                       if (cellLink.toLowerCase().startsWith('http')) {
-                          var pinElement = document.createElement('div');
-                          pinElement.className = 'location-pin';
-                          
-                          // Assign pins for Google links, standard world globes for general websites
-                          if (cellLink.toLowerCase().includes('google') || cellLink.toLowerCase().includes('maps')) {
-                             pinElement.innerText = '📍';
-                          } else {
-                             pinElement.innerText = '🌐';
-                          }
-                          
-                          // Isolated action pipeline - 100% immune to bleeding text leaks
-                          pinElement.onclick = function(event) {
-                             event.stopPropagation();
-                             window.open(cellLink, '_blank');
-                          };
-                          
-                          rowDiv.appendChild(pinElement);
-                       }
-                    }
-                    
-                    display.appendChild(rowDiv);
-                  });
-                }
-              }
+              if(allData[i][0] === row[0]) { capture = true; contentRows.push(allData[i]); }
+              else if (capture && allData[i][0] === "") { contentRows.push(allData[i]); }
+              else if (capture && allData[i][0] !== "") { break; }
             }
+            display.innerHTML = "";
+            contentRows.forEach(function(r) {
+              if(!r[1]) return;
+              var lines = r[1].toString().split('\n');
+              lines.forEach(function(l) {
+                if(!l.trim()) return;
+                var rowDiv = document.createElement('div'); rowDiv.className = 'info-line';
+                var pin = "";
+                if(r[2] && r[2].toString().toLowerCase().includes('http')) {
+                   var mapUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(l);
+                   pin = '<div class="location-pin" onclick="window.open(\'' + mapUrl + '\', \'_blank\'); event.stopPropagation();">📍</div>';
+                }
+                rowDiv.innerHTML = '<span>' + formatBold(l) + '</span>' + pin;
+                display.appendChild(rowDiv);
+              });
+            });
           }
           document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
           btn.classList.add('active');
         };
-        
         tabContainer.appendChild(btn);
         if (index === 0) btn.click();
       });
