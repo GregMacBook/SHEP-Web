@@ -39,11 +39,9 @@
   </div>
   <script>
     let allData = [];
-    
-    // Base URL for API requests
     var scriptUrlBase = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec";
 
-    // Initial load sync replacing google.script.run
+    // Initial load sync
     fetch(scriptUrlBase)
       .then(response => response.json())
       .then(data => { 
@@ -51,7 +49,8 @@
         renderMenu(data); 
       })
       .catch(err => {
-        document.getElementById('content').innerText = "Error syncing initial data.";
+        document.getElementById('content').innerText = "Error syncing initial data. Please refresh.";
+        console.error(err);
       });
 
     function formatBold(text) { return text.toString().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); }
