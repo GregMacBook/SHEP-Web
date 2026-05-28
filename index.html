@@ -39,7 +39,21 @@
   </div>
   <script>
     let allData = [];
-    google.script.run.withSuccessHandler(function(data) { allData = data; renderMenu(data); }).getData();
+    
+    // Base URL for API requests
+    var scriptUrlBase = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec";
+
+    // Initial load sync replacing google.script.run
+    fetch(scriptUrlBase)
+      .then(response => response.json())
+      .then(data => { 
+        allData = data; 
+        renderMenu(data); 
+      })
+      .catch(err => {
+        document.getElementById('content').innerText = "Error syncing initial data.";
+      });
+
     function formatBold(text) { return text.toString().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); }
     
     function getImgUrl(url) {
@@ -72,32 +86,35 @@
           
           if (name === "WHAT DO WE COLLECT") {
             display.innerHTML = '<div class="collection-grid" id="coll-box">Loading...</div>';
-            google.script.run.withSuccessHandler(function(items) {
-              var box = document.getElementById('coll-box'); box.innerHTML = "";
-              var groups = {};
-              items.slice(1).forEach(function(it) { 
-                if(!it[0] || it[0].trim() === "" || !it[1]) return;
-                if(!groups[it[0]]) groups[it[0]] = []; 
-                groups[it[0]].push(it); 
-              });
-              Object.keys(groups).forEach(function(g) {
-                var col = document.createElement('div'); col.className = 'category-column';
-                col.innerHTML = '<div class="category-header">' + g + '</div>';
-                groups[g].forEach(function(it) {
-                  var r = document.createElement('div'); r.className = 'item-row';
-                  r.innerHTML = '<div><img src="' + getImgUrl(it[2]) + '" class="donation-img-small"></div><div class="item-name">' + it[1] + '</div>';
-                  col.appendChild(r);
+            
+            fetch(scriptUrlBase + "?action=collections")
+              .then(response => response.json())
+              .then(items => {
+                var box = document.getElementById('coll-box'); box.innerHTML = "";
+                var groups = {};
+                items.slice(1).forEach(function(it) { 
+                  if(!it[0] || it[0].trim() === "" || !it[1]) return;
+                  if(!groups[it[0]]) groups[it[0]] = []; 
+                  groups[it[0]].push(it); 
                 });
-                box.appendChild(col);
+                Object.keys(groups).forEach(function(g) {
+                  var col = document.createElement('div'); col.className = 'category-column';
+                  col.innerHTML = '<div class="category-header">' + g + '</div>';
+                  groups[g].forEach(function(it) {
+                    var r = document.createElement('div'); r.className = 'item-row';
+                    r.innerHTML = '<div><img src="' + getImgUrl(it[2]) + '" class="donation-img-small"></div><div class="item-name">' + it[1] + '</div>';
+                    col.appendChild(r);
+                  });
+                  box.appendChild(col);
+                });
+              }).catch(err => {
+                document.getElementById('coll-box').innerText = "Error loading collection items.";
               });
-            }).getCollectionData();
             
           } else if (name === "WHAT WE CAN'T ACCEPT" || name === "WHAT WE CAN’T ACCEPT") {
             display.innerHTML = '<div class="collection-grid" id="unacceptable-box">Loading...</div>';
             
-            var scriptUrl = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec?action=unacceptable"; 
-            
-            fetch(scriptUrl)
+            fetch(scriptUrlBase + "?action=unacceptable")
               .then(response => response.json())
               .then(items => {
                 var box = document.getElementById('unacceptable-box'); box.innerHTML = "";
@@ -123,15 +140,21 @@
             
           } else if (name === "PICTURES") {
             display.innerHTML = '<div class="pictures-grid" id="pic-box">Loading...</div>';
-            google.script.run.withSuccessHandler(function(pics) {
-              var box = document.getElementById('pic-box'); box.innerHTML = "";
-              pics.slice(1).forEach(function(p) {
-                if(!p[1]) return;
-                var card = document.createElement('div'); card.className = 'gallery-card';
-                card.innerHTML = '<img src="' + getImgUrl(p[1]) + '" class="gallery-img"><div style="margin-top:10px;font-weight:bold;color:#4a4e69;">' + p[0] + '</div>';
-                box.appendChild(card);
+            
+            fetch(scriptUrlBase + "?action=pictures")
+              .then(response => response.json())
+              .then(pics => {
+                var box = document.getElementById('pic-box'); box.innerHTML = "";
+                pics.slice(1).forEach(function(p) {
+                  if(!p[1]) return;
+                  var card = document.createElement('div'); card.className = 'gallery-card';
+                  card.innerHTML = '<img src="' + getImgUrl(p[1]) + '" class="gallery-img"><div style="margin-top:10px;font-weight:bold;color:#4a4e69;">' + p[0] + '</div>';
+                  box.appendChild(card);
+                });
+              }).catch(err => {
+                document.getElementById('pic-box').innerText = "Error loading pictures.";
               });
-            }).getPicturesData();
+
           } else if (name === "MONETARY DONATIONS") {
              display.innerHTML = `<div class="commentary-box"><h3>Your Impact Matters</h3><p>At <strong>SHEP</strong>, every dollar donated goes toward providing hygiene essentials for those in our community. Thank you for your support.</p></div><div class="info-line"><span>Account: SAFE HAVEN ESSENTIAL PACKS</span></div><div class="info-line"><span>BSB: 306821 / Acct: 6706014</span></div><center><button class="donate-btn" onclick="window.open('https://tinyurl.com/SHEPDonation', '_blank')">Complete Donation & Get Receipt</button></center>`;
           } else {
