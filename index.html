@@ -89,19 +89,31 @@
     function renderMenu(data) {
       var tabContainer = document.getElementById('tabs');
       tabContainer.innerHTML = "";
-      var cleanData = data.filter(function(row) {
-        if (!row[0]) return false;
-        var name = row[0].toString().toUpperCase().trim();
-        return name !== "" && name !== "DONATIONFORMURL" && name !== "INSTAGRAM" && name !== "FACEBOOK";
+      
+      // Get unique section list for our sidebar navigation buttons
+      var uniqueSections = [];
+      data.forEach(function(row) {
+        if (!row[0]) return;
+        var sName = row[0].toString().trim();
+        var upper = sName.toUpperCase();
+        if (sName !== "" && upper !== "DONATIONFORMURL" && upper !== "INSTAGRAM" && upper !== "FACEBOOK" && uniqueSections.indexOf(sName) === -1) {
+          uniqueSections.push(sName);
+        }
       });
       
-      cleanData.forEach(function(row, index) {
+      uniqueSections.forEach(function(sectionName, index) {
         var btn = document.createElement('div');
-        btn.className = 'tab'; btn.innerText = row[0];
+        btn.className = 'tab'; btn.innerText = sectionName;
+        
         btn.onclick = function() {
-          document.getElementById('tab-title').innerText = row[0];
+          // Manage button active states
+          var tabs = document.getElementsByClassName('tab');
+          for(var t=0; t<tabs.length; t++) { tabs[t].classList.remove('active'); }
+          btn.classList.add('active');
+
+          document.getElementById('tab-title').innerText = sectionName;
           var display = document.getElementById('content');
-          var name = row[0].toUpperCase().trim();
+          var name = sectionName.toUpperCase().trim();
           
           if (name === "WHAT DO WE COLLECT") {
             display.innerHTML = '<div class="collection-grid" id="coll-box">Loading...</div>';
@@ -212,12 +224,14 @@
              display.innerHTML = `<div class="commentary-box"><h3>Your Impact Matters</h3><p>At <strong>SHEP</strong>, every dollar donated goes toward providing hygiene essentials for those in our community. Thank you for your support.</p></div><div class="info-line"><span>Account: SAFE HAVEN ESSENTIAL PACKS</span></div><div class="info-line"><span>BSB: 306821 / Acct: 6706014</span></div><center><button class="donate-btn" onclick="window.open('https://tinyurl.com/SHEPDonation', '_blank')">Complete Donation & Get Receipt</button></center>`;
           
           } else {
-            var contentRows = []; var capture = false;
+            // Match rows strictly based on explicit Section Names in Column A
+            var contentRows = [];
             for(var i=0; i<allData.length; i++) {
-              if(allData[i][0] === row[0]) { capture = true; contentRows.push(allData[i]); }
-              else if (capture && allData[i][0] === "") { contentRows.push(allData[i]); }
-              else if (capture && allData[i][0] !== "") { break; }
+              if(allData[i][0] && allData[i][0].toString().toUpperCase().trim() === name) {
+                contentRows.push(allData[i]);
+              }
             }
+            
             display.innerHTML = "";
             contentRows.forEach(function(r) {
               if(!r[1]) return;
@@ -230,11 +244,12 @@
                 textSpan.innerHTML = formatBold(l);
                 rowDiv.appendChild(textSpan);
                 
-                // 1. BULLETPROOF URL CHECK: Use a strict Regular Expression to verify Column C contains actual hyperlinks
+                // Pure Verification check for Images
                 var rawCell = r[2] ? r[2].toString().trim() : "";
                 var urlPattern = /^(https?:\/\/[^\s]+)/i;
                 
-                if(rawCell && urlPattern.test(rawCell) && !rawCell.toLowerCase().includes('maps')) {
+                // Strict rule: Must explicitly be an independent link structure and NOT bleed text from Column B
+                if(rawCell && urlPattern.test(rawCell) && !rawCell.toLowerCase().includes('maps') && rawCell.includes('.')) {
                   var urls = rawCell.split(',');
                   var validUrls = [];
                   
@@ -270,7 +285,7 @@
                   }
                 }
                 
-                // 2. Strict Map Check: ONLY add a pin if 'maps' is explicitly verified
+                // Pure Verification check for Maps
                 if(rawCell && rawCell.toLowerCase().includes('maps') && urlPattern.test(rawCell)) {
                    rowDiv.style.flexDirection = 'row';
                    rowDiv.style.justifyContent = 'space-between';
