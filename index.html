@@ -208,7 +208,7 @@
                 console.error(err);
               });
 
-} else if (name === "MONETARY DONATIONS") {
+          } else if (name === "MONETARY DONATIONS") {
              display.innerHTML = `<div class="commentary-box"><h3>Your Impact Matters</h3><p>At <strong>SHEP</strong>, every dollar donated goes toward providing hygiene essentials for those in our community. Thank you for your support.</p></div><div class="info-line"><span>Account: SAFE HAVEN ESSENTIAL PACKS</span></div><div class="info-line"><span>BSB: 306821 / Acct: 6706014</span></div><center><button class="donate-btn" onclick="window.open('https://tinyurl.com/SHEPDonation', '_blank')">Complete Donation & Get Receipt</button></center>`;
           
           } else {
@@ -225,16 +225,17 @@
               lines.forEach(function(l) {
                 if(!l.trim()) return;
                 var rowDiv = document.createElement('div'); rowDiv.className = 'info-line';
-                rowDiv.style.flexDirection = 'column';
-                rowDiv.style.alignItems = 'flex-start';
-                rowDiv.style.gap = '15px';
                 
                 var textSpan = document.createElement('span');
                 textSpan.innerHTML = formatBold(l);
                 rowDiv.appendChild(textSpan);
                 
-                // Smart check: If there are image links in Column C (r[2]), render them inside this box!
+                // 1. Smart Image Check: Only change box layout and display images if links exist in Column C
                 if(r[2] && r[2].toString().toLowerCase().includes('http') && !r[2].toString().toLowerCase().includes('maps')) {
+                  rowDiv.style.flexDirection = 'column';
+                  rowDiv.style.alignItems = 'flex-start';
+                  rowDiv.style.gap = '15px';
+
                   var imgContainer = document.createElement('div');
                   imgContainer.style.display = 'flex';
                   imgContainer.style.gap = '15px';
@@ -257,7 +258,7 @@
                   rowDiv.appendChild(imgContainer);
                 }
                 
-                // Fallback for your original map pin functionality
+                // 2. Strict Map Check: ONLY add a pin if 'maps' is explicitly present in Column C
                 if(r[2] && r[2].toString().toLowerCase().includes('maps')) {
                    rowDiv.style.flexDirection = 'row';
                    rowDiv.style.justifyContent = 'space-between';
@@ -266,7 +267,7 @@
                    var pin = document.createElement('div');
                    pin.className = 'location-pin';
                    pin.innerHTML = '📍';
-                   pin.onclick = function() { window.open(mapUrl, '_blank'); event.stopPropagation(); };
+                   pin.onclick = function(event) { window.open(mapUrl, '_blank'); event.stopPropagation(); };
                    rowDiv.appendChild(pin);
                 }
                 
@@ -274,6 +275,11 @@
               });
             });
           }
+        };
+        tabContainer.appendChild(btn);
+        if(index === 0) btn.click();
+      });
+    }
   </script>
 </body>
 </html>
