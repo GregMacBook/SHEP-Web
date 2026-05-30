@@ -230,52 +230,52 @@
                 textSpan.innerHTML = formatBold(l);
                 rowDiv.appendChild(textSpan);
                 
-                // 1. STRENGTHENED Image Link Check: Row text must explicitly contain "http" and NOT "maps"
-                if(r[2] && r[2].toString().toLowerCase().includes('http') && !r[2].toString().toLowerCase().includes('maps')) {
-                  var rawCell = r[2].toString().trim();
-                  if (rawCell.toLowerCase().indexOf('http') === 0) {
-                    var urls = rawCell.split(',');
-                    var validUrls = [];
-                    
-                    urls.forEach(function(url) {
-                      var cleanUrl = url.trim();
-                      if(cleanUrl && cleanUrl.toLowerCase().indexOf('http') === 0) {
-                        validUrls.push(cleanUrl);
-                      }
-                    });
-
-                    if(validUrls.length > 0) {
-                      rowDiv.style.flexDirection = 'column';
-                      rowDiv.style.alignItems = 'flex-start';
-                      rowDiv.style.gap = '15px';
-
-                      var imgContainer = document.createElement('div');
-                      imgContainer.style.display = 'flex';
-                      imgContainer.style.gap = '15px';
-                      imgContainer.style.flexWrap = 'wrap';
-                      imgContainer.style.marginTop = '5px';
-                      
-                      validUrls.forEach(function(cleanUrl) {
-                        var img = document.createElement('img');
-                        img.src = cleanUrl;
-                        img.style.width = '120px';
-                        img.style.height = '120px';
-                        img.style.objectFit = 'cover';
-                        img.style.borderRadius = '8px';
-                        img.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
-                        imgContainer.appendChild(img);
-                      });
-                      rowDiv.appendChild(imgContainer);
+                // 1. BULLETPROOF URL CHECK: Use a strict Regular Expression to verify Column C contains actual hyperlinks
+                var rawCell = r[2] ? r[2].toString().trim() : "";
+                var urlPattern = /^(https?:\/\/[^\s]+)/i;
+                
+                if(rawCell && urlPattern.test(rawCell) && !rawCell.toLowerCase().includes('maps')) {
+                  var urls = rawCell.split(',');
+                  var validUrls = [];
+                  
+                  urls.forEach(function(url) {
+                    var cleanUrl = url.trim();
+                    if(cleanUrl && urlPattern.test(cleanUrl)) {
+                      validUrls.push(cleanUrl);
                     }
+                  });
+
+                  if(validUrls.length > 0) {
+                    rowDiv.style.flexDirection = 'column';
+                    rowDiv.style.alignItems = 'flex-start';
+                    rowDiv.style.gap = '15px';
+
+                    var imgContainer = document.createElement('div');
+                    imgContainer.style.display = 'flex';
+                    imgContainer.style.gap = '15px';
+                    imgContainer.style.flexWrap = 'wrap';
+                    imgContainer.style.marginTop = '5px';
+                    
+                    validUrls.forEach(function(cleanUrl) {
+                      var img = document.createElement('img');
+                      img.src = cleanUrl;
+                      img.style.width = '120px';
+                      img.style.height = '120px';
+                      img.style.objectFit = 'cover';
+                      img.style.borderRadius = '8px';
+                      img.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+                      imgContainer.appendChild(img);
+                    });
+                    rowDiv.appendChild(imgContainer);
                   }
                 }
                 
-                // 2. Strict Map Check: ONLY add a pin if 'maps' is explicitly present in Column C
-                if(r[2] && r[2].toString().toLowerCase().includes('maps')) {
+                // 2. Strict Map Check: ONLY add a pin if 'maps' is explicitly verified
+                if(rawCell && rawCell.toLowerCase().includes('maps') && urlPattern.test(rawCell)) {
                    rowDiv.style.flexDirection = 'row';
                    rowDiv.style.justifyContent = 'space-between';
                    rowDiv.style.alignItems = 'center';
-                   var mapUrl = r[2].toString().trim();
+                   var mapUrl = rawCell;
                    var pin = document.createElement('div');
                    pin.className = 'location-pin';
                    pin.innerHTML = '📍';
