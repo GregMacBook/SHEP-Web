@@ -87,6 +87,57 @@
       }
       return '';
     }
+/* Structural Help Cards */
+    .testimonial-card { background: white; border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; gap: 25px; max-width: 900px; align-items: flex-start; border-left: 6px solid #ac8ad4; }
+    .testimonial-media { width: 220px; min-width: 220px; height: 150px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #fafafa; position: relative; }
+    .testimonial-img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: top center; }
+    .testimonial-video { width: 100%; height: 100%; border: none; display: block; }
+    .testimonial-body { flex-grow: 1; color: #4a4e69; line-height: 1.6; }
+    .testimonial-sender { color: #916bbf; font-size: 1.15em; font-weight: 700; margin: 0 0 10px 0; border-bottom: 1px dashed #ac8ad4; padding-bottom: 5px; }
+    @media (max-width: 768px) { .testimonial-card { flex-direction: column; } .testimonial-media { width: 100%; min-width: 100%; } }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo-header"><img src="https://i.imgur.com/oAWTWfg.png" width="140"></div>
+    <div id="tabs"></div>
+  </div>
+  <div class="main-container">
+    <h1 id="tab-title">SHEP</h1>
+    <div class="divider"></div>
+    <div id="content">Syncing data...</div>
+  </div>
+  <script>
+    let allData = [];
+    var scriptUrlBase = "https://script.google.com/macros/s/AKfycbww5xEpevxJK-nB8fAvY6gzc-_81QG98l9PT86vsCxA_JK7OZf0uvlOPrspQjadPGGH/exec";
+
+    fetch(scriptUrlBase)
+      .then(response => response.json())
+      .then(data => { 
+        allData = data; 
+        renderMenu(data); 
+      })
+      .catch(err => {
+        document.getElementById('content').innerText = "Error syncing data.";
+        console.error(err);
+      });
+
+    function formatBold(text) { return text.toString().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); }
+    
+    function getImgUrl(url, isSmallThumbnail) {
+      if (!url) return 'https://i.imgur.com/oAWTWfg.png';
+      var str = url.toString().trim();
+      
+      // If it's already an active text stream payload from the server, read it immediately
+      if (str.indexOf('data:') === 0) return str;
+      
+      var match = str.match(/(?:id=|file\/d\/|usercontent\.com\/d\/)([a-zA-Z0-9_-]{25,50})/);
+      if (match && match[1]) { 
+        var size = isSmallThumbnail ? 'sz=w120' : 'sz=w500';
+        return 'https://drive.google.com/thumbnail?id=' + match[1] + '&' + size; 
+      }
+      return 'https://i.imgur.com/oAWTWfg.png';
+    }
 
     function renderMenu(data) {
       var tabContainer = document.getElementById('tabs');
