@@ -67,18 +67,12 @@
       if (!url) return 'https://i.imgur.com/oAWTWfg.png';
       var str = url.toString().trim();
       
-      // If code.gs passed down an inline Base64 data string, render it instantly
       if (str.indexOf('data:') === 0) return str;
       if (str.indexOf('googleusercontent.com') !== -1 && str.indexOf('data:') === -1) return str;
       
-      var id = "";
-      if (str.indexOf('/file/d/') !== -1) { 
-        id = str.split('/file/d/')[1].split('/')[0]; 
-      } else if (str.indexOf('id=') !== -1) { 
-        id = str.split('id=')[1].split('&')[0]; 
-      }
-      if (id) { 
-        return 'https://drive.google.com/thumbnail?id=1hyHAc--32pe2lYtAsorYG_EMGp5ziwFObSBAteJi-Hc&sz=w500'; 
+      var match = str.match(/(?:id=|file\/d\/|usercontent\.com\/d\/)([a-zA-Z0-9_-]{25,50})/);
+      if (match && match[1]) { 
+        return 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w500'; 
       }
       return 'https://i.imgur.com/oAWTWfg.png';
     }
@@ -86,14 +80,9 @@
     function getVideoEmbedUrl(url) {
       if (!url) return '';
       var str = url.toString().trim();
-      var id = "";
-      if (str.indexOf('/file/d/') !== -1) { 
-        id = str.split('/file/d/')[1].split('/')[0]; 
-      } else if (str.indexOf('id=') !== -1) { 
-        id = str.split('id=')[1].split('&')[0]; 
-      }
-      if (id) { 
-        return 'https://drive.google.com/file/d/' + id + '/preview'; 
+      var match = str.match(/(?:id=|file\/d\/)([a-zA-Z0-9_-]{25,50})/);
+      if (match && match[1]) { 
+        return 'https://drive.google.com/file/d/' + match[1] + '/preview'; 
       }
       return '';
     }
