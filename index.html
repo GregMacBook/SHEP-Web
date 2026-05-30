@@ -67,9 +67,9 @@
       if (!url) return 'https://i.imgur.com/oAWTWfg.png';
       var str = url.toString().trim();
       
-      // If the URL is already converted to a secure base64 text stream by Code.gs, load it instantly!
+      // If code.gs passed down an inline Base64 data string, render it instantly
       if (str.indexOf('data:') === 0) return str;
-      if (str.indexOf('googleusercontent.com') !== -1) return str;
+      if (str.indexOf('googleusercontent.com') !== -1 && str.indexOf('data:') === -1) return str;
       
       var id = "";
       if (str.indexOf('/file/d/') !== -1) { 
@@ -78,7 +78,7 @@
         id = str.split('id=')[1].split('&')[0]; 
       }
       if (id) { 
-        return 'https://drive.google.com/thumbnail?id=' + id + '&sz=w500'; 
+        return 'https://drive.google.com/thumbnail?id=1hyHAc--32pe2lYtAsorYG_EMGp5ziwFObSBAteJi-Hc&sz=w500'; 
       }
       return 'https://i.imgur.com/oAWTWfg.png';
     }
