@@ -230,32 +230,42 @@
                 textSpan.innerHTML = formatBold(l);
                 rowDiv.appendChild(textSpan);
                 
-                // 1. Smart Image Check: Only change box layout and display images if links exist in Column C
+                // 1. Smart Image Check: Verify Column C has valid characters before modifying structure
                 if(r[2] && r[2].toString().toLowerCase().includes('http') && !r[2].toString().toLowerCase().includes('maps')) {
-                  rowDiv.style.flexDirection = 'column';
-                  rowDiv.style.alignItems = 'flex-start';
-                  rowDiv.style.gap = '15px';
-
-                  var imgContainer = document.createElement('div');
-                  imgContainer.style.display = 'flex';
-                  imgContainer.style.gap = '15px';
-                  imgContainer.style.flexWrap = 'wrap';
-                  imgContainer.style.marginTop = '5px';
-                  
                   var urls = r[2].toString().split(',');
+                  var validUrls = [];
+                  
                   urls.forEach(function(url) {
                     var cleanUrl = url.trim();
-                    if(!cleanUrl) return;
-                    var img = document.createElement('img');
-                    img.src = cleanUrl;
-                    img.style.width = '120px';
-                    img.style.height = '120px';
-                    img.style.objectFit = 'cover';
-                    img.style.borderRadius = '8px';
-                    img.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
-                    imgContainer.appendChild(img);
+                    if(cleanUrl && cleanUrl.toLowerCase().startsWith('http')) {
+                      validUrls.push(cleanUrl);
+                    }
                   });
-                  rowDiv.appendChild(imgContainer);
+
+                  // ONLY display an image block if we found real links
+                  if(validUrls.length > 0) {
+                    rowDiv.style.flexDirection = 'column';
+                    rowDiv.style.alignItems = 'flex-start';
+                    rowDiv.style.gap = '15px';
+
+                    var imgContainer = document.createElement('div');
+                    imgContainer.style.display = 'flex';
+                    imgContainer.style.gap = '15px';
+                    imgContainer.style.flexWrap = 'wrap';
+                    imgContainer.style.marginTop = '5px';
+                    
+                    validUrls.forEach(function(cleanUrl) {
+                      var img = document.createElement('img');
+                      img.src = cleanUrl;
+                      img.style.width = '120px';
+                      img.style.height = '120px';
+                      img.style.objectFit = 'cover';
+                      img.style.borderRadius = '8px';
+                      img.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+                      imgContainer.appendChild(img);
+                    });
+                    rowDiv.appendChild(imgContainer);
+                  }
                 }
                 
                 // 2. Strict Map Check: ONLY add a pin if 'maps' is explicitly present in Column C
