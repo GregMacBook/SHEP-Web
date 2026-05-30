@@ -63,18 +63,20 @@
 
     function formatBold(text) { return text.toString().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); }
     
-    // Robust high-compatibility Google Drive link engine bypasses cross-origin restrictions
     function getImgUrl(url) {
       if (!url) return 'https://i.imgur.com/oAWTWfg.png';
       var str = url.toString().trim();
-      var id = "";
+      
+      // If the URL is already converted to a secure base64 text stream by Code.gs, load it instantly!
+      if (str.indexOf('data:') === 0) return str;
       if (str.indexOf('googleusercontent.com') !== -1) return str;
+      
+      var id = "";
       if (str.indexOf('/file/d/') !== -1) { 
         id = str.split('/file/d/')[1].split('/')[0]; 
       } else if (str.indexOf('id=') !== -1) { 
         id = str.split('id=')[1].split('&')[0]; 
       }
-      // Uses thumbnail pathway with a width parameter of 500px for sharp loading
       if (id) { 
         return 'https://drive.google.com/thumbnail?id=' + id + '&sz=w500'; 
       }
