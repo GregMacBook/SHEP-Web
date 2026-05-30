@@ -26,13 +26,14 @@
     .donate-btn { display: inline-block; margin-top: 20px; padding: 18px 45px; background: #84a59d; color: white; border-radius: 35px; font-weight: bold; cursor: pointer; text-decoration: none; border: none; text-transform: uppercase; font-size: 1.1em; }
     .location-pin { cursor: pointer; font-size: 1.4em; margin-left: 15px; }
     
-    /* Premium Split Testimonial Cards */
-    .testimonial-card { background: white; border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; gap: 25px; max-width: 900px; align-items: center; border-left: 6px solid #ac8ad4; }
-    .testimonial-media { width: 200px; min-width: 200px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #fdfbfd; }
-    .testimonial-img { width: 100%; height: 140px; display: block; object-fit: cover; }
-    .testimonial-video { width: 100%; height: 140px; border: none; display: block; }
-    .testimonial-body { flex-grow: 1; color: #4a4e69; line-height: 1.6; font-size: 0.95em; }
-    @media (max-width: 768px) { .testimonial-card { flex-direction: column; align-items: flex-start; } .testimonial-media { width: 100%; min-width: 100%; } }
+    /* Clean Structural Testimonial Cards */
+    .testimonial-card { background: white; border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; gap: 25px; max-width: 900px; align-items: flex-start; border-left: 6px solid #ac8ad4; }
+    .testimonial-media { width: 220px; min-width: 220px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #fafafa; }
+    .testimonial-img { width: 100%; height: 150px; display: block; object-fit: cover; }
+    .testimonial-video { width: 100%; height: 150px; border: none; display: block; }
+    .testimonial-body { flex-grow: 1; color: #4a4e69; line-height: 1.6; }
+    .testimonial-sender { color: #916bbf; font-size: 1.15em; font-weight: 700; margin: 0 0 10px 0; border-bottom: 1px dashed #ac8ad4; padding-bottom: 5px; }
+    @media (max-width: 768px) { .testimonial-card { flex-direction: column; } .testimonial-media { width: 100%; min-width: 100%; } }
   </style>
 </head>
 <body>
@@ -43,7 +44,7 @@
   <div class="main-container">
     <h1 id="tab-title">SHEP</h1>
     <div class="divider"></div>
-    <div id="content">Syncing latest data...</div>
+    <div id="content">Syncing data...</div>
   </div>
   <script>
     let allData = [];
@@ -56,7 +57,7 @@
         renderMenu(data); 
       })
       .catch(err => {
-        document.getElementById('content').innerText = "Error syncing initial data. Please refresh.";
+        document.getElementById('content').innerText = "Error syncing data.";
         console.error(err);
       });
 
@@ -122,7 +123,7 @@
                   });
                   box.appendChild(col);
                 });
-              }).catch(err => { document.getElementById('coll-box').innerText = "Error loading collection items."; });
+              }).catch(err => { document.getElementById('coll-box').innerText = "Error loading elements."; });
             
           } else if (name === "WHAT WE CAN'T ACCEPT" || name === "WHAT WE CAN’T ACCEPT") {
             display.innerHTML = '<div class="collection-grid" id="unacceptable-box">Loading...</div>';
@@ -146,7 +147,7 @@
                   });
                   box.appendChild(col);
                 });
-              }).catch(err => { document.getElementById('unacceptable-box').innerText = "Error loading unacceptable items."; });
+              }).catch(err => { document.getElementById('unacceptable-box').innerText = "Error loading elements."; });
             
           } else if (name === "PICTURES") {
             display.innerHTML = '<div class="pictures-grid" id="pic-box">Loading...</div>';
@@ -163,86 +164,51 @@
               }).catch(err => { document.getElementById('pic-box').innerText = "Error loading pictures."; });
 
           } else if (name === "TESTIMONIALS") {
-            display.innerHTML = '<div id="testimonial-box">Loading stories & media...</div>';
+            display.innerHTML = '<div id="testimonial-box">Loading structured stories...</div>';
             
-            Promise.all([
-              fetch(scriptUrlBase + "?action=testimonials").then(res => res.json()),
-              Promise.resolve(allData)
-            ]).then(([mediaItems, mainData]) => {
-              var box = document.getElementById('testimonial-box'); box.innerHTML = "";
-              
-              // Find the raw text block under the TESTIMONIALS section header
-              var rawTextBlock = "";
-              for(var i=0; i<mainData.length; i++) {
-                if(mainData[i][0] && mainData[i][0].toString().toUpperCase().trim() === "TESTIMONIALS") {
-                  rawTextBlock = mainData[i][1];
-                  break;
-                }
-              }
-              
-              // Smart-split the large cell text block by looking for double or single line breaks
-              var paragraphs = rawTextBlock.split(/\n\s*\n/).map(p => p.trim()).filter(p => p !== "");
-              
-              // If it didn't split by double spaces, fallback to single line splits
-              if(paragraphs.length <= 1) {
-                paragraphs = rawTextBlock.split('\n').map(p => p.trim()).filter(p => p !== "");
-              }
-
-              // Build our media dictionary mapping list names to Drive links
-              var mediaMap = {};
-              mediaItems.slice(1).forEach(m => { if(m[0]) mediaMap[m[0].trim().toUpperCase()] = m[1]; });
-              
-              // Convert the map keys into an ordered array so we can fallback to raw row matching order
-              var mediaKeys = mediaItems.slice(1).filter(m => m[0]).map(m => m[0].trim().toUpperCase());
-
-              // Loop through the 5 split story paragraphs
-              paragraphs.forEach((story, idx) => {
-                var card = document.createElement('div'); card.className = 'testimonial-card';
+            fetch(scriptUrlBase + "?action=testimonials")
+              .then(res => res.json())
+              .then(rows => {
+                var box = document.getElementById('testimonial-box'); box.innerHTML = "";
                 
-                var matchedLink = "";
-                var isVideo = false;
-                var matchedKeyName = "";
-
-                // Strategy A: Scan text content for explicit name keywords
-                Object.keys(mediaMap).forEach(keyName => {
-                  if (story.toUpperCase().includes(keyName) || keyName.includes(story.toUpperCase().substring(0, 15))) {
-                    matchedLink = mediaMap[keyName];
-                    matchedKeyName = keyName;
+                // Read rows directly from the clean Testimonials tab (skipping headers)
+                rows.slice(1).forEach(function(cols) {
+                  var senderName = cols[0] ? cols[0].trim() : "";
+                  var mediaLink = cols[1] ? cols[1].trim() : "";
+                  var storyText = cols[2] ? cols[2].trim() : "";
+                  
+                  if (!senderName && !storyText) return; // Skip completely blank sheet rows
+                  
+                  var card = document.createElement('div'); card.className = 'testimonial-card';
+                  var isVideo = senderName.toUpperCase().includes("LITTLE THINGS FOR TINY TOTS");
+                  
+                  // Setup Media side panel frame
+                  var mediaHtml = '<div class="testimonial-media"><img src="https://i.imgur.com/oAWTWfg.png" class="testimonial-img"></div>';
+                  if (mediaLink) {
+                    if (isVideo) {
+                      mediaHtml = '<div class="testimonial-media"><iframe src="' + getVideoEmbedUrl(mediaLink) + '" class="testimonial-video" allow="autoplay"></iframe></div>';
+                    } else {
+                      mediaHtml = '<div class="testimonial-media"><img src="' + getImgUrl(mediaLink) + '" class="testimonial-img"></div>';
+                    }
                   }
+                  
+                  // Write out the content structure with the Sender Name as an official Header title line
+                  card.innerHTML = mediaHtml + 
+                                   '<div class="testimonial-body">' +
+                                     '<div class="testimonial-sender">' + senderName + '</div>' +
+                                     '<div>' + formatBold(storyText).replace(/\n/g, '<br>') + '</div>' +
+                                   '</div>';
+                                   
+                  box.appendChild(card);
                 });
-
-                // Strategy B: Fallback directly to matching by row sequence if text tags aren't perfectly found
-                if (!matchedLink && mediaKeys[idx]) {
-                  matchedKeyName = mediaKeys[idx];
-                  matchedLink = mediaMap[matchedKeyName];
-                }
-
-                // Identify if this row target is flagged as our video file frame
-                if (matchedKeyName.includes("LITTLE THINGS FOR TINY TOTS") || (idx === 4 || idx === paragraphs.length - 1)) {
-                  isVideo = true;
-                }
-
-                var mediaHtml = '<div class="testimonial-media"><img src="https://i.imgur.com/oAWTWfg.png" class="testimonial-img"></div>'; 
                 
-                if (matchedLink) {
-                  if (isVideo) {
-                    mediaHtml = '<div class="testimonial-media"><iframe src="' + getVideoEmbedUrl(matchedLink) + '" class="testimonial-video" allow="autoplay"></iframe></div>';
-                  } else {
-                    mediaHtml = '<div class="testimonial-media"><img src="' + getImgUrl(matchedLink) + '" class="testimonial-img"></div>';
-                  }
+                if(box.children.length === 0) {
+                  box.innerText = "No testimonials found. Please check your data layout.";
                 }
-                
-                card.innerHTML = mediaHtml + '<div class="testimonial-body">' + formatBold(story).replace(/\n/g, '<br>') + '</div>';
-                box.appendChild(card);
+              }).catch(err => {
+                document.getElementById('testimonial-box').innerText = "Error loading structured testimonials.";
+                console.error(err);
               });
-              
-              if(paragraphs.length === 0) {
-                box.innerText = "No testimonials found. Check your sheet cell values.";
-              }
-            }).catch(err => {
-              document.getElementById('testimonial-box').innerText = "Error rendering split stories.";
-              console.error(err);
-            });
 
           } else if (name === "MONETARY DONATIONS") {
              display.innerHTML = `<div class="commentary-box"><h3>Your Impact Matters</h3><p>At <strong>SHEP</strong>, every dollar donated goes toward providing hygiene essentials for those in our community. Thank you for your support.</p></div><div class="info-line"><span>Account: SAFE HAVEN ESSENTIAL PACKS</span></div><div class="info-line"><span>BSB: 306821 / Acct: 6706014</span></div><center><button class="donate-btn" onclick="window.open('https://tinyurl.com/SHEPDonation', '_blank')">Complete Donation & Get Receipt</button></center>`;
