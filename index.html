@@ -208,8 +208,9 @@
                 console.error(err);
               });
 
-          } else if (name === "MONETARY DONATIONS") {
+} else if (name === "MONETARY DONATIONS") {
              display.innerHTML = `<div class="commentary-box"><h3>Your Impact Matters</h3><p>At <strong>SHEP</strong>, every dollar donated goes toward providing hygiene essentials for those in our community. Thank you for your support.</p></div><div class="info-line"><span>Account: SAFE HAVEN ESSENTIAL PACKS</span></div><div class="info-line"><span>BSB: 306821 / Acct: 6706014</span></div><center><button class="donate-btn" onclick="window.open('https://tinyurl.com/SHEPDonation', '_blank')">Complete Donation & Get Receipt</button></center>`;
+          
           } else {
             var contentRows = []; var capture = false;
             for(var i=0; i<allData.length; i++) {
@@ -224,23 +225,55 @@
               lines.forEach(function(l) {
                 if(!l.trim()) return;
                 var rowDiv = document.createElement('div'); rowDiv.className = 'info-line';
-                var pin = "";
-                if(r[2] && r[2].toString().toLowerCase().includes('http')) {
-                   var mapUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(l);
-                   pin = '<div class="location-pin" onclick="window.open(\'' + mapUrl + '\', \'_blank\'); event.stopPropagation();">📍</div>';
+                rowDiv.style.flexDirection = 'column';
+                rowDiv.style.alignItems = 'flex-start';
+                rowDiv.style.gap = '15px';
+                
+                var textSpan = document.createElement('span');
+                textSpan.innerHTML = formatBold(l);
+                rowDiv.appendChild(textSpan);
+                
+                // Smart check: If there are image links in Column C (r[2]), render them inside this box!
+                if(r[2] && r[2].toString().toLowerCase().includes('http') && !r[2].toString().toLowerCase().includes('maps')) {
+                  var imgContainer = document.createElement('div');
+                  imgContainer.style.display = 'flex';
+                  imgContainer.style.gap = '15px';
+                  imgContainer.style.flexWrap = 'wrap';
+                  imgContainer.style.marginTop = '5px';
+                  
+                  var urls = r[2].toString().split(',');
+                  urls.forEach(function(url) {
+                    var cleanUrl = url.trim();
+                    if(!cleanUrl) return;
+                    var img = document.createElement('img');
+                    img.src = cleanUrl;
+                    img.style.width = '120px';
+                    img.style.height = '120px';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '8px';
+                    img.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+                    imgContainer.appendChild(img);
+                  });
+                  rowDiv.appendChild(imgContainer);
                 }
-                rowDiv.innerHTML = '<span>' + formatBold(l) + '</span>' + pin;
+                
+                // Fallback for your original map pin functionality
+                if(r[2] && r[2].toString().toLowerCase().includes('maps')) {
+                   rowDiv.style.flexDirection = 'row';
+                   rowDiv.style.justifyContent = 'space-between';
+                   rowDiv.style.alignItems = 'center';
+                   var mapUrl = r[2].toString().trim();
+                   var pin = document.createElement('div');
+                   pin.className = 'location-pin';
+                   pin.innerHTML = '📍';
+                   pin.onclick = function() { window.open(mapUrl, '_blank'); event.stopPropagation(); };
+                   rowDiv.appendChild(pin);
+                }
+                
                 display.appendChild(rowDiv);
               });
             });
           }
-          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-          btn.classList.add('active');
-        };
-        tabContainer.appendChild(btn);
-        if (index === 0) btn.click();
-      });
-    }
   </script>
 </body>
 </html>
