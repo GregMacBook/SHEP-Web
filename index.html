@@ -64,16 +64,17 @@
     function formatBold(text) { return text.toString().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); }
     
     function getImgUrl(url, isSmallThumbnail) {
-      if (!url) return 'https://i.imgur.com/oAWTWfg.png';
+      if (!url) return '';
       var str = url.toString().trim();
       if (str.indexOf('data:') === 0) return str;
+      if (str.indexOf('http') !== 0) return '';
       
-      var match = str.match(/(?:id=|file\/d\/|usercontent\.com\/d\/)([a-zA-Z0-9_-]{25,50})/);
+      var match = str.match(/(?:id=|file\/d\/|usercontent\.com\/d\/|usercontent\.com\/dev\/)([a-zA-Z0-9_-]{25,50})/);
       if (match && match[1]) { 
         var size = isSmallThumbnail ? 'sz=w120' : 'sz=w500';
         return 'https://drive.google.com/thumbnail?id=' + match[1] + '&' + size; 
       }
-      return 'https://i.imgur.com/oAWTWfg.png';
+      return str;
     }
 
     function getVideoEmbedUrl(url) {
@@ -90,14 +91,19 @@
       var tabContainer = document.getElementById('tabs');
       tabContainer.innerHTML = "";
       
-      // Get unique section list for our sidebar navigation buttons
+      // FIXED: Build a strict unique sidebar list so repeating rows don't spawn duplicate buttons
       var uniqueSections = [];
       data.forEach(function(row) {
         if (!row[0]) return;
         var sName = row[0].toString().trim();
         var upper = sName.toUpperCase();
-        if (sName !== "" && upper !== "DONATIONFORMURL" && upper !== "INSTAGRAM" && upper !== "FACEBOOK" && uniqueSections.indexOf(sName) === -1) {
-          uniqueSections.push(sName);
+        if (sName !== "" && upper !== "DONATIONFORMURL" && upper !== "INSTAGRAM" && upper !== "FACEBOOK") {
+          var looksDuplicate = uniqueSections.some(function(existing) {
+            return existing.toUpperCase().trim() === upper;
+          });
+          if (!looksDuplicate) {
+            uniqueSections.push(sName);
+          }
         }
       });
       
@@ -106,7 +112,6 @@
         btn.className = 'tab'; btn.innerText = sectionName;
         
         btn.onclick = function() {
-          // Manage button active states
           var tabs = document.getElementsByClassName('tab');
           for(var t=0; t<tabs.length; t++) { tabs[t].classList.remove('active'); }
           btn.classList.add('active');
@@ -179,7 +184,6 @@
 
           } else if (name === "TESTIMONIALS") {
             display.innerHTML = '<div id="testimonial-box">Loading structured stories...</div>';
-            
             fetch(scriptUrlBase + "?action=testimonials")
               .then(res => res.json())
               .then(rows => {
@@ -188,7 +192,6 @@
                   var senderName = cols[0] ? cols[0].trim() : "";
                   var mediaLink = cols[1] ? cols[1].trim() : "";
                   var storyText = cols[2] ? cols[2].trim() : "";
-                  
                   if (!senderName && !storyText) return; 
                   
                   var card = document.createElement('div'); card.className = 'testimonial-card';
@@ -202,29 +205,19 @@
                       mediaHtml = '<div class="testimonial-media"><img src="' + getImgUrl(mediaLink, false) + '" class="testimonial-img"></div>';
                     }
                   }
-                  
                   card.innerHTML = mediaHtml + 
                                    '<div class="testimonial-body">' +
                                      '<div class="testimonial-sender">' + senderName + '</div>' +
                                      '<div>' + formatBold(storyText).replace(/\n/g, '<br>') + '</div>' +
                                    '</div>';
-                                   
                   box.appendChild(card);
                 });
-                
-                if(box.children.length === 0) {
-                  box.innerText = "No testimonials found. Please check your data layout.";
-                }
-              }).catch(err => {
-                document.getElementById('testimonial-box').innerText = "Error loading structured testimonials.";
-                console.error(err);
-              });
+              }).catch(err => { console.error(err); });
 
           } else if (name === "MONETARY DONATIONS") {
              display.innerHTML = `<div class="commentary-box"><h3>Your Impact Matters</h3><p>At <strong>SHEP</strong>, every dollar donated goes toward providing hygiene essentials for those in our community. Thank you for your support.</p></div><div class="info-line"><span>Account: SAFE HAVEN ESSENTIAL PACKS</span></div><div class="info-line"><span>BSB: 306821 / Acct: 6706014</span></div><center><button class="donate-btn" onclick="window.open('https://tinyurl.com/SHEPDonation', '_blank')">Complete Donation & Get Receipt</button></center>`;
           
           } else {
-            // Match rows strictly based on explicit Section Names in Column A
             var contentRows = [];
             for(var i=0; i<allData.length; i++) {
               if(allData[i][0] && allData[i][0].toString().toUpperCase().trim() === name) {
@@ -244,19 +237,19 @@
                 textSpan.innerHTML = formatBold(l);
                 rowDiv.appendChild(textSpan);
                 
-                // Pure Verification check for Images
                 var rawCell = r[2] ? r[2].toString().trim() : "";
                 var urlPattern = /^(https?:\/\/[^\s]+)/i;
                 
-                // Strict rule: Must explicitly be an independent link structure and NOT bleed text from Column B
-                if(rawCell && urlPattern.test(rawCell) && !rawCell.toLowerCase().includes('maps') && rawCell.includes('.')) {
+                // FIXED: Image URL verification logic handles multi-link sequences elegantly
+                if(rawCell && !rawCell.toLowerCase().includes('maps')) {
                   var urls = rawCell.split(',');
                   var validUrls = [];
                   
                   urls.forEach(function(url) {
                     var cleanUrl = url.trim();
-                    if(cleanUrl && urlPattern.test(cleanUrl)) {
-                      validUrls.push(cleanUrl);
+                    var parsedUrl = getImgUrl(cleanUrl, false);
+                    if(parsedUrl && parsedUrl.indexOf('http') === 0) {
+                      validUrls.push(parsedUrl);
                     }
                   });
 
@@ -269,23 +262,24 @@
                     imgContainer.style.display = 'flex';
                     imgContainer.style.gap = '15px';
                     imgContainer.style.flexWrap = 'wrap';
-                    imgContainer.style.marginTop = '5px';
+                    imgContainer.style.marginTop = '10px';
                     
                     validUrls.forEach(function(cleanUrl) {
                       var img = document.createElement('img');
                       img.src = cleanUrl;
-                      img.style.width = '120px';
-                      img.style.height = '120px';
+                      img.style.width = '140px';
+                      img.style.height = '140px';
                       img.style.objectFit = 'cover';
                       img.style.borderRadius = '8px';
-                      img.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+                      img.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                      // Safety net fallback: hides the frame entirely if a link doesn't successfully parse or resolve
+                      img.onerror = function() { this.style.display = 'none'; };
                       imgContainer.appendChild(img);
                     });
                     rowDiv.appendChild(imgContainer);
                   }
                 }
                 
-                // Pure Verification check for Maps
                 if(rawCell && rawCell.toLowerCase().includes('maps') && urlPattern.test(rawCell)) {
                    rowDiv.style.flexDirection = 'row';
                    rowDiv.style.justifyContent = 'space-between';
