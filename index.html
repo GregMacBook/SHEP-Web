@@ -26,9 +26,9 @@
     .donate-btn { display: inline-block; margin-top: 20px; padding: 18px 45px; background: #84a59d; color: white; border-radius: 35px; font-weight: bold; cursor: pointer; text-decoration: none; border: none; text-transform: uppercase; font-size: 1.1em; }
     .location-pin { cursor: pointer; font-size: 1.4em; margin-left: 15px; }
     
-    /* Clean Structural Testimonial Cards */
+    /* Structural Testimonial Cards */
     .testimonial-card { background: white; border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; gap: 25px; max-width: 900px; align-items: flex-start; border-left: 6px solid #ac8ad4; }
-    .testimonial-media { width: 220px; min-width: 220px; height: 150px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #fafafa; }
+    .testimonial-media { width: 220px; min-width: 220px; height: 150px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #fafafa; position: relative; }
     .testimonial-img { width: 100%; height: 100%; display: block; object-fit: cover; }
     .testimonial-video { width: 100%; height: 100%; border: none; display: block; }
     .testimonial-body { flex-grow: 1; color: #4a4e69; line-height: 1.6; }
@@ -63,7 +63,7 @@
 
     function formatBold(text) { return text.toString().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); }
     
-    // Enhanced Drive link converter to bypass /view blocks
+    // Robust high-compatibility Google Drive link engine bypasses cross-origin restrictions
     function getImgUrl(url) {
       if (!url) return 'https://i.imgur.com/oAWTWfg.png';
       var str = url.toString().trim();
@@ -74,8 +74,9 @@
       } else if (str.indexOf('id=') !== -1) { 
         id = str.split('id=')[1].split('&')[0]; 
       }
+      // Uses thumbnail pathway with a width parameter of 500px for sharp loading
       if (id) { 
-        return 'https://drive.google.com/uc?export=view&id=' + id; 
+        return 'https://drive.google.com/thumbnail?id=' + id + '&sz=w500'; 
       }
       return 'https://i.imgur.com/oAWTWfg.png';
     }
